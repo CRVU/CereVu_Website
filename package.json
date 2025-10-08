@@ -1,0 +1,21 @@
+{
+  "name": "cerevu-website",
+  "version": "1.0.0",
+  "description": "CereVu - Objectively measuring pain in real-time with wearable sensor technology",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "cerevu",
+    "pain",
+    "medical",
+    "wearable",
+    "sensor",
+    "healthcare"
+  ],
+  "author": "CereVu Medical",
+  "license": "UNLICENSED"
+}
+
