@@ -240,11 +240,11 @@ class BrainSignalAnalyzer {
         
         // Signal parameters
         this.samplingRate = 250; // Hz
-        this.duration = 10; // 10 seconds
+        this.duration = 15; // 15 seconds
         this.numSamples = this.samplingRate * this.duration;
         this.timeOffset = 0;
         
-        // Create pain profile over 10 seconds with different zones
+        // Create pain profile over 15 seconds with different zones
         this.painProfile = this.createPainProfile();
         this.currentPain = 5.2;
         this.currentReliability = 'Good';
@@ -255,20 +255,31 @@ class BrainSignalAnalyzer {
     createPainProfile() {
         const profile = [];
         const sections = [
-            { duration: 2, level: 2, reliability: 'High' },    // 0-2s: Mild
-            { duration: 2, level: 5.5, reliability: 'Good' },  // 2-4s: Moderate
-            { duration: 2, level: 8.2, reliability: 'Fair' },  // 4-6s: Severe
-            { duration: 2, level: 3.5, reliability: 'High' },  // 6-8s: Mild
-            { duration: 2, level: 6.8, reliability: 'Good' }   // 8-10s: Moderate-Severe
+            { duration: 3, level: 2.5, reliability: 'High' },   // 0-3s: Mild
+            { duration: 3, level: 5.0, reliability: 'Good' },   // 3-6s: Moderate
+            { duration: 3, level: 7.5, reliability: 'Fair' },   // 6-9s: Severe
+            { duration: 3, level: 4.0, reliability: 'Good' },   // 9-12s: Moderate
+            { duration: 3, level: 6.5, reliability: 'Good' }    // 12-15s: Moderate-Severe
         ];
         
-        for (const section of sections) {
+        for (let sectionIdx = 0; sectionIdx < sections.length; sectionIdx++) {
+            const section = sections[sectionIdx];
             const samples = Math.floor(section.duration * this.samplingRate);
+            const nextSection = sections[sectionIdx + 1];
+            
             for (let i = 0; i < samples; i++) {
+                // Smooth transition to next section
+                let painValue = section.level;
+                if (nextSection && i > samples * 0.7) {
+                    // Gradual transition in last 30% of section
+                    const transitionProgress = (i - samples * 0.7) / (samples * 0.3);
+                    painValue = section.level + (nextSection.level - section.level) * transitionProgress;
+                }
+                
                 // Add slight variation
-                const variation = (Math.random() - 0.5) * 0.5;
+                const variation = (Math.random() - 0.5) * 0.3;
                 profile.push({
-                    pain: Math.max(0, Math.min(10, section.level + variation)),
+                    pain: Math.max(0, Math.min(10, painValue + variation)),
                     reliability: section.reliability
                 });
             }
@@ -326,7 +337,7 @@ class BrainSignalAnalyzer {
             ctx.stroke();
         }
         
-        // Vertical grid lines (every 2 seconds)
+        // Vertical grid lines (every 3 seconds)
         for (let i = 0; i <= 5; i++) {
             const x = (i / 5) * width;
             ctx.beginPath();
@@ -336,31 +347,41 @@ class BrainSignalAnalyzer {
         }
         
         // Draw time labels
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.8)';
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
         ctx.font = '11px Inter, sans-serif';
         ctx.textAlign = 'center';
-        for (let i = 0; i <= 10; i++) {
-            const x = (i / 10) * width;
+        for (let i = 0; i <= 15; i += 3) {
+            const x = (i / 15) * width;
             ctx.fillText(`${i}s`, x, height - 5);
         }
         
-        // Draw pain zone backgrounds (more visible)
+        // Get current pain at indicator position FIRST (for proper synchronization)
+        const currentSampleIdx = Math.floor(this.timeOffset) % this.painProfile.length;
+        const currentData = this.painProfile[currentSampleIdx];
+        const currentPain = currentData.pain;
+        
+        // Helper function to get pain color
+        const getPainColor = (pain) => {
+            if (pain < 3) {
+                const intensity = 0.15 + (pain / 3) * 0.15;
+                return `rgba(16, 185, 129, ${intensity})`;
+            } else if (pain < 6) {
+                const intensity = 0.2 + ((pain - 3) / 3) * 0.2;
+                return `rgba(234, 179, 8, ${intensity})`;
+            } else {
+                const intensity = 0.3 + ((pain - 6) / 4) * 0.25;
+                return `rgba(239, 68, 68, ${intensity})`;
+            }
+        };
+        
+        // Draw pain zone backgrounds across the entire signal (showing all pain levels in time)
         const samplesPerPixel = this.numSamples / width;
         for (let x = 0; x < width; x++) {
-            const sampleIdx = Math.floor(x * samplesPerPixel + this.timeOffset) % this.painProfile.length;
+            const sampleIdx = Math.floor(x * samplesPerPixel) % this.painProfile.length;
             const painData = this.painProfile[sampleIdx];
             const pain = painData.pain;
             
-            let color;
-            if (pain < 3) {
-                color = `rgba(16, 185, 129, ${0.15 + pain * 0.05})`;
-            } else if (pain < 6) {
-                color = `rgba(234, 179, 8, ${0.15 + (pain - 3) * 0.08})`;
-            } else {
-                color = `rgba(239, 68, 68, ${0.2 + (pain - 6) * 0.1})`;
-            }
-            
-            ctx.fillStyle = color;
+            ctx.fillStyle = getPainColor(pain);
             ctx.fillRect(x, 0, 1, height);
         }
         
@@ -372,9 +393,10 @@ class BrainSignalAnalyzer {
         ctx.shadowColor = '#0EA5E9';
         
         for (let x = 0; x < width; x++) {
-            const sampleIdx = Math.floor(x * samplesPerPixel + this.timeOffset);
+            const sampleIdx = Math.floor(x * samplesPerPixel);
             const painData = this.painProfile[sampleIdx % this.painProfile.length];
-            const signal = this.generateRawEEG(sampleIdx, painData.pain);
+            const actualSampleIdx = sampleIdx + Math.floor(this.timeOffset);
+            const signal = this.generateRawEEG(actualSampleIdx, painData.pain);
             
             const y = centerY - (signal * 1.2);
             
@@ -388,28 +410,45 @@ class BrainSignalAnalyzer {
         ctx.stroke();
         ctx.shadowBlur = 0;
         
-        // Draw current time indicator (vertical line)
-        const currentPosition = (this.timeOffset / this.numSamples) * width;
+        // Update current pain values
+        this.currentPain = currentPain;
+        this.currentReliability = currentData.reliability;
+        
+        // Calculate indicator position to match where we read the pain from
+        const indicatorSamplePosition = currentSampleIdx % this.numSamples;
+        const currentPosition = (indicatorSamplePosition / this.numSamples) * width;
+        
+        // Indicator color based on current pain level (solid, bright colors)
+        let indicatorColor;
+        if (currentPain < 3) {
+            indicatorColor = '#10B981'; // Green
+        } else if (currentPain < 6) {
+            indicatorColor = '#EAB308'; // Yellow
+        } else {
+            indicatorColor = '#EF4444'; // Red
+        }
+        
+        // Draw indicator line with strong glow
         ctx.beginPath();
-        ctx.strokeStyle = '#F59E0B';
+        ctx.strokeStyle = indicatorColor;
         ctx.lineWidth = 3;
         ctx.setLineDash([]);
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = indicatorColor;
         ctx.moveTo(currentPosition, 0);
         ctx.lineTo(currentPosition, height - 20);
         ctx.stroke();
+        ctx.shadowBlur = 0;
         
-        // Draw indicator label
-        ctx.fillStyle = '#F59E0B';
-        ctx.font = 'bold 11px Inter, sans-serif';
+        // Draw indicator label with matching color
+        ctx.fillStyle = indicatorColor;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = indicatorColor;
+        ctx.font = 'bold 12px Inter, sans-serif';
         ctx.textAlign = 'center';
-        const currentTime = ((this.timeOffset / this.numSamples) * this.duration).toFixed(1);
+        const currentTime = ((currentSampleIdx / this.samplingRate)).toFixed(1);
         ctx.fillText(`▼ ${currentTime}s`, currentPosition, 15);
-        
-        // Update current pain from current position
-        const currentSampleIdx = Math.floor(this.timeOffset) % this.painProfile.length;
-        const currentData = this.painProfile[currentSampleIdx];
-        this.currentPain = currentData.pain;
-        this.currentReliability = currentData.reliability;
+        ctx.shadowBlur = 0;
     }
     
     // Draw pain gauge (circular gauge)
@@ -506,8 +545,8 @@ class BrainSignalAnalyzer {
     
     // Animation loop
     animate() {
-        // Scroll through the signal slowly
-        this.timeOffset += 0.5; // Much slower scroll speed
+        // Scroll through the signal very slowly
+        this.timeOffset += 0.4; // Even slower scroll speed for 15 seconds
         if (this.timeOffset >= this.numSamples) {
             this.timeOffset = 0;
         }
