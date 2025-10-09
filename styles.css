@@ -1345,6 +1345,7 @@ body {
     transition: var(--transition);
 }
 
+
 .app-card:hover .app-icon {
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(20, 184, 166, 0.2) 100%);
     border-color: var(--primary-color);
