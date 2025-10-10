@@ -255,12 +255,14 @@ class BrainSignalAnalyzer {
     createPainProfile() {
         const profile = [];
         const sections = [
-            { duration: 3, level: 2.5, reliability: 'High' },   // 0-3s: Mild
-            { duration: 3, level: 5.0, reliability: 'Good' },   // 3-6s: Moderate
-            { duration: 3, level: 7.5, reliability: 'Fair' },   // 6-9s: Severe
-            { duration: 3, level: 4.0, reliability: 'Good' },   // 9-12s: Moderate
-            { duration: 3, level: 6.5, reliability: 'Good' }    // 12-15s: Moderate-Severe
+            { duration: 3, level: 2.0, reliability: 'High' },   // 0-3s: Low (Green)
+            { duration: 3, level: 4.5, reliability: 'Good' },   // 3-6s: Moderate (Yellow)
+            { duration: 3, level: 7.0, reliability: 'Fair' },   // 6-9s: High (Red)
+            { duration: 3, level: 5.5, reliability: 'Good' },   // 9-12s: Moderate (Yellow)
+            { duration: 3, level: 8.0, reliability: 'Fair' }    // 12-15s: Severe (Red)
         ];
+        
+        let totalSampleIndex = 0;
         
         for (let sectionIdx = 0; sectionIdx < sections.length; sectionIdx++) {
             const section = sections[sectionIdx];
@@ -276,12 +278,20 @@ class BrainSignalAnalyzer {
                     painValue = section.level + (nextSection.level - section.level) * transitionProgress;
                 }
                 
-                // Add slight variation
-                const variation = (Math.random() - 0.5) * 0.3;
+                // Add slow-varying smooth variation using low-frequency sine waves
+                const t = totalSampleIndex / this.samplingRate;
+                // Multiple slow sine waves at different frequencies for natural variation
+                const slowVariation1 = 0.15 * Math.sin(2 * Math.PI * 0.3 * t); // 0.3 Hz
+                const slowVariation2 = 0.1 * Math.sin(2 * Math.PI * 0.5 * t + 1.5); // 0.5 Hz
+                const slowVariation3 = 0.08 * Math.sin(2 * Math.PI * 0.15 * t + 3); // 0.15 Hz
+                const totalVariation = slowVariation1 + slowVariation2 + slowVariation3;
+                
                 profile.push({
-                    pain: Math.max(0, Math.min(10, painValue + variation)),
+                    pain: Math.max(0, Math.min(10, painValue + totalVariation)),
                     reliability: section.reliability
                 });
+                
+                totalSampleIndex++;
             }
         }
         
@@ -292,7 +302,7 @@ class BrainSignalAnalyzer {
     generateRawEEG(sampleIndex, painLevel) {
         const t = sampleIndex / this.samplingRate;
         let signal = 0;
-        const noise = (Math.random() - 0.5) * 3;
+        const noise = (Math.random() - 0.5) * 2.0;
         
         // Pain-correlated patterns
         const painFactor = painLevel / 10;
