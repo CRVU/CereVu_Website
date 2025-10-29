@@ -32,12 +32,15 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
-// Smooth scroll for anchor links
+// Smooth scroll for anchor links (only for same-page anchors)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // Skip empty hash links
+    if (anchor.getAttribute('href') === '#') return;
+    
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
+            e.preventDefault();
             const navbarHeight = navbar.offsetHeight;
             const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
             
@@ -594,8 +597,96 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
+// Professional Tabs Functionality
+function initializeTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    if (tabButtons.length === 0 || tabContents.length === 0) return;
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Add active class to corresponding content
+            const targetContent = document.getElementById(targetTab);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                
+                // Trigger animation for feature cards
+                const featureCards = targetContent.querySelectorAll('.feature-card');
+                featureCards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+            
+            // Smooth scroll to tab content on mobile
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const tabsContainer = document.querySelector('.features-tabs-container');
+                    if (tabsContainer) {
+                        tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            }
+        });
+    });
+    
+    // Keyboard navigation for tabs
+    const tabsNavigation = document.querySelector('.tabs-navigation');
+    if (tabsNavigation) {
+        tabsNavigation.addEventListener('keydown', (e) => {
+            const currentButton = document.activeElement;
+            if (!currentButton.classList.contains('tab-button')) return;
+            
+            const buttons = Array.from(tabButtons);
+            const currentIndex = buttons.indexOf(currentButton);
+            
+            let nextButton;
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextButton = buttons[currentIndex + 1] || buttons[0];
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                nextButton = buttons[currentIndex - 1] || buttons[buttons.length - 1];
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                nextButton = buttons[0];
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                nextButton = buttons[buttons.length - 1];
+            }
+            
+            if (nextButton) {
+                nextButton.focus();
+                nextButton.click();
+            }
+        });
+    }
+}
+
+// Initialize tabs when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTabs();
+});
+
 // Easter egg: Console message
 console.log('%cCereVu Medical', 'color: #0EA5E9; font-size: 48px; font-weight: bold; letter-spacing: 4px;');
 console.log('%cObjectively measuring pain in real-time', 'color: rgba(255, 255, 255, 0.7); font-size: 16px;');
-console.log('%cInterested in joining our team? Email us at jgasson@cerevu.com', 'color: #0EA5E9; font-size: 14px;');
+console.log('%cInterested in joining our team? Email us at info@cerevu.com', 'color: #0EA5E9; font-size: 14px;');
 
