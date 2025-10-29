@@ -109,6 +109,10 @@ function formatNumber(num) {
     if (num >= 100) {
         return num.toString();
     }
+    // For percentages >= 90, show with > prefix
+    if (num >= 90) {
+        return '>' + Math.floor(num).toString() + '%';
+    }
     return num.toString() + '%';
 }
 
@@ -123,8 +127,12 @@ const statsObserver = new IntersectionObserver((entries) => {
                     const num = parseFloat(text) * (text.includes('K') ? 1000 : 1);
                     animateCounter(stat, num);
                 } else if (text.includes('%')) {
-                    const num = parseFloat(text);
-                    animateCounter(stat, num);
+                    // Handle ">" prefix in percentage (e.g., ">90%")
+                    const cleanText = text.replace('>', '');
+                    const num = parseFloat(cleanText);
+                    if (!isNaN(num)) {
+                        animateCounter(stat, num);
+                    }
                 } else if (text.includes('M')) {
                     stat.style.opacity = '0';
                     setTimeout(() => {
@@ -152,8 +160,12 @@ const clinicalStatsObserver = new IntersectionObserver((entries) => {
                 setTimeout(() => {
                     const text = stat.textContent;
                     if (text.includes('+') || text.includes('%')) {
-                        const num = parseFloat(text);
-                        animateCounter(stat, num, 2000);
+                        // Handle ">" prefix (e.g., ">90%")
+                        const cleanText = text.replace('>', '');
+                        const num = parseFloat(cleanText);
+                        if (!isNaN(num)) {
+                            animateCounter(stat, num, 2000);
+                        }
                     }
                 }, index * 200);
             });
