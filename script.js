@@ -600,5 +600,5 @@ document.addEventListener('DOMContentLoaded', () => {
 // Easter egg: Console message
 console.log('%cCereVu Medical', 'color: #0EA5E9; font-size: 48px; font-weight: bold; letter-spacing: 4px;');
 console.log('%cObjectively measuring pain in real-time', 'color: rgba(255, 255, 255, 0.7); font-size: 16px;');
-console.log('%cInterested in joining our team? Email us at jgasson@cerevu.com', 'color: #0EA5E9; font-size: 14px;');
+console.log('%cInterested in joining our team? Email us at info@cerevu.com', 'color: #0EA5E9; font-size: 14px;');
 
