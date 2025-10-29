@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="About CereVu Medical - Leading the future of objective pain assessment with validated technology.">
-    <meta name="keywords" content="CereVu, about, medical device, pain measurement, team, leadership">
+    <meta name="keywords" content="CereVu, about, contact, medical device, pain measurement, team, leadership">
     <meta name="author" content="CereVu Medical">
     
     <!-- Open Graph / Facebook -->
@@ -48,7 +48,6 @@
                 <a href="clinical.html">Clinical Data</a>
                 <a href="applications.html">Applications</a>
                 <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
                 <a href="privacy.html">Privacy</a>
             </div>
             <button class="mobile-menu-btn" id="mobile-menu-btn">
@@ -67,12 +66,11 @@
         <a href="clinical.html">Clinical Data</a>
         <a href="applications.html">Applications</a>
         <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
         <a href="privacy.html">Privacy</a>
     </div>
 
     <!-- About Section -->
-    <section class="about" id="about" style="margin-top: 80px; min-height: calc(100vh - 80px);">
+    <section class="about" id="about" style="margin-top: 80px; min-height: auto; padding-bottom: 60px;">
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
@@ -124,13 +122,59 @@
                                 <p>CTO</p>
                             </div>
                         </div>
-                        <div class="achievements">
-                            <div class="achievement-item">✓ Five clinical studies</div>
-                            <div class="achievement-item">✓ Published data</div>
-                            <div class="achievement-item">✓ Multiple grants</div>
-                            <div class="achievement-item">✓ Strategic partnerships</div>
-                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact" style="padding-top: 60px; padding-bottom: 80px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle">Let's discuss how CereVu can transform pain management in your organization</p>
+            </div>
+            <div class="contact-wrapper">
+                <div class="contact-info-grid">
+                    <div class="contact-card">
+                        <div class="contact-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </div>
+                        <h3 class="contact-card-title">Call Us</h3>
+                        <p class="contact-card-description">Speak directly with our CEO</p>
+                        <a href="tel:+14152336594" class="contact-card-link">(415) 233-6594</a>
+                    </div>
+                </div>
+                
+                <div class="contact-form-section">
+                    <h3>Contact Us</h3>
+                    <p>Fill out the form below and we'll get back to you shortly.</p>
+                    <form class="contact-form" action="mailto:info@cerevu.com" method="post" enctype="text/plain">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="institution">Institution</label>
+                            <input type="text" id="institution" name="institution" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -158,7 +202,6 @@
                     <h4 class="footer-heading">Company</h4>
                     <ul class="footer-links">
                         <li><a href="about.html">About</a></li>
-                        <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -177,4 +220,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
