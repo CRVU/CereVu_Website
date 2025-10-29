@@ -2379,6 +2379,330 @@ body {
     }
 }
 
+/* Professional Tabs Styling */
+.features-tabs-container {
+    margin-top: 48px;
+}
+
+.tabs-navigation {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.tabs-navigation::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tabs-navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tabs-navigation::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.tab-button {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 28px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(20, 184, 166, 0.08) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tab-button:hover:not(.active) {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tab-button:hover:not(.active)::before {
+    opacity: 1;
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.15) 0%, 
+        rgba(20, 184, 166, 0.12) 100%);
+    color: var(--primary-light);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    box-shadow: 
+        0 4px 16px rgba(14, 165, 233, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--primary-color) 50%,
+        transparent 100%);
+    border-radius: 3px 3px 0 0;
+}
+
+.tab-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.tab-button:hover .tab-icon {
+    transform: scale(1.1);
+}
+
+.tab-button.active .tab-icon {
+    color: var(--primary-color);
+    filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.6));
+}
+
+.tabs-content {
+    position: relative;
+    min-height: 400px;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeInTab 0.5s ease-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 32px;
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.08) 0%, 
+        rgba(20, 184, 166, 0.06) 100%);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(14, 165, 233, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-content-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--primary-color) 20%,
+        var(--accent-teal) 50%,
+        var(--primary-color) 80%,
+        transparent 100%);
+}
+
+.tab-content-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, rgba(255, 255, 255, 0.9) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tab-content-subtitle {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Enhanced Feature Cards in Tabs */
+.tab-content .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+.tab-content .feature-card {
+    position: relative;
+    padding: 40px 32px;
+    background: linear-gradient(135deg, 
+        rgba(15, 23, 42, 0.95) 0%, 
+        rgba(30, 41, 59, 0.92) 100%);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(14, 165, 233, 0.2);
+    border-radius: 18px;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.tab-content .feature-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    height: 4px;
+    background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--primary-color) 50%,
+        transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.tab-content .feature-card:hover::before {
+    opacity: 1;
+}
+
+.tab-content .feature-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-color);
+    box-shadow: 
+        0 20px 60px rgba(14, 165, 233, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.tab-content .feature-card .feature-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.15) 0%, 
+        rgba(20, 184, 166, 0.1) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(14, 165, 233, 0.25);
+    color: var(--primary-light);
+    transition: var(--transition);
+    box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+    position: relative;
+}
+
+.tab-content .feature-card .feature-icon svg {
+    width: 28px;
+    height: 28px;
+    transition: var(--transition);
+    filter: drop-shadow(0 2px 4px rgba(14, 165, 233, 0.2));
+}
+
+.tab-content .feature-card:hover .feature-icon {
+    background: linear-gradient(135deg, 
+        rgba(14, 165, 233, 0.25) 0%, 
+        rgba(20, 184, 166, 0.18) 100%);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.35);
+    transform: scale(1.05) rotate(5deg);
+}
+
+.tab-content .feature-card:hover .feature-icon svg {
+    color: var(--primary-color);
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(14, 165, 233, 0.4));
+}
+
+.tab-content .feature-title {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+}
+
+.tab-content .feature-description {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+}
+
+/* Tab Button Animations */
+.tab-button span {
+    position: relative;
+    z-index: 1;
+}
+
+.tab-button:active {
+    transform: scale(0.98);
+}
+
+/* Loading State for Tab Content */
+.tab-content.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Product Section Specific Styles */
+.product-section {
+    background: linear-gradient(180deg, var(--background) 0%, var(--background-alt) 100%);
+}
+
+.product-section .tech-explanation {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+}
+
+.product-section .applications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .hero-container {
@@ -2442,6 +2766,92 @@ body {
 
     .features-grid, .studies-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Tabs Responsive Styles */
+    .features-tabs-container {
+        margin-top: 32px;
+    }
+
+    .tabs-navigation {
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        margin-bottom: 32px;
+    }
+
+    .tab-button {
+        width: 100%;
+        min-width: unset;
+        padding: 14px 20px;
+        font-size: 14px;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .tab-button.active::after {
+        display: none;
+    }
+
+    .tab-button.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: linear-gradient(180deg, 
+            var(--primary-color) 0%, 
+            var(--accent-teal) 100%);
+        border-radius: 0 4px 4px 0;
+    }
+
+    .tab-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .tab-content-header {
+        padding: 24px 20px;
+        margin-bottom: 32px;
+    }
+
+    .tab-content-title {
+        font-size: 24px;
+    }
+
+    .tab-content-subtitle {
+        font-size: 15px;
+    }
+
+    .tab-content .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .tab-content .feature-card {
+        padding: 28px 24px;
+    }
+
+    .tab-content .feature-card .feature-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 20px;
+    }
+
+    .tab-content .feature-card .feature-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .tab-content .feature-title {
+        font-size: 19px;
+        margin-bottom: 12px;
+    }
+
+    .tab-content .feature-description {
+        font-size: 14px;
     }
 
     .applications-grid {
@@ -2541,6 +2951,82 @@ body {
 
     .section-title {
         font-size: 28px;
+    }
+
+    /* Product Page Tabs on Small Screens */
+    .product-section {
+        padding: 40px 0 80px !important;
+    }
+
+    .features-tabs-container {
+        margin-top: 24px;
+    }
+
+    .tabs-navigation {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .tab-button {
+        padding: 12px 16px;
+        font-size: 13px;
+        gap: 10px;
+    }
+
+    .tab-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .tab-content-header {
+        padding: 20px 16px;
+        margin-bottom: 24px;
+    }
+
+    .tab-content-title {
+        font-size: 22px;
+    }
+
+    .tab-content-subtitle {
+        font-size: 14px;
+    }
+
+    .tech-explanation {
+        grid-template-columns: 1fr;
+        margin-bottom: 32px !important;
+    }
+
+    .tech-card {
+        padding: 24px 20px;
+    }
+
+    .tech-title {
+        font-size: 18px;
+    }
+
+    .tech-description {
+        font-size: 14px;
+    }
+
+    .tech-diagram {
+        padding: 32px 20px;
+    }
+
+    .tech-diagram h4 {
+        font-size: 20px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .diagram-flow {
+        gap: 16px;
+    }
+
+    .flow-step {
+        padding: 16px;
+    }
+
+    .flow-step p {
+        font-size: 13px;
     }
 
     .stat-large {

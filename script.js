@@ -597,6 +597,94 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500);
 });
 
+// Professional Tabs Functionality
+function initializeTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    if (tabButtons.length === 0 || tabContents.length === 0) return;
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Add active class to corresponding content
+            const targetContent = document.getElementById(targetTab);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                
+                // Trigger animation for feature cards
+                const featureCards = targetContent.querySelectorAll('.feature-card');
+                featureCards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+            
+            // Smooth scroll to tab content on mobile
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const tabsContainer = document.querySelector('.features-tabs-container');
+                    if (tabsContainer) {
+                        tabsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 100);
+            }
+        });
+    });
+    
+    // Keyboard navigation for tabs
+    const tabsNavigation = document.querySelector('.tabs-navigation');
+    if (tabsNavigation) {
+        tabsNavigation.addEventListener('keydown', (e) => {
+            const currentButton = document.activeElement;
+            if (!currentButton.classList.contains('tab-button')) return;
+            
+            const buttons = Array.from(tabButtons);
+            const currentIndex = buttons.indexOf(currentButton);
+            
+            let nextButton;
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextButton = buttons[currentIndex + 1] || buttons[0];
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                nextButton = buttons[currentIndex - 1] || buttons[buttons.length - 1];
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                nextButton = buttons[0];
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                nextButton = buttons[buttons.length - 1];
+            }
+            
+            if (nextButton) {
+                nextButton.focus();
+                nextButton.click();
+            }
+        });
+    }
+}
+
+// Initialize tabs when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTabs();
+});
+
 // Easter egg: Console message
 console.log('%cCereVu Medical', 'color: #0EA5E9; font-size: 48px; font-weight: bold; letter-spacing: 4px;');
 console.log('%cObjectively measuring pain in real-time', 'color: rgba(255, 255, 255, 0.7); font-size: 16px;');
