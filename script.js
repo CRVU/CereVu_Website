@@ -32,12 +32,15 @@ window.addEventListener('scroll', () => {
     lastScroll = currentScroll;
 });
 
-// Smooth scroll for anchor links
+// Smooth scroll for anchor links (only for same-page anchors)
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // Skip empty hash links
+    if (anchor.getAttribute('href') === '#') return;
+    
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
+            e.preventDefault();
             const navbarHeight = navbar.offsetHeight;
             const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
             
