@@ -234,7 +234,8 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    padding-top: 80px;
+    padding-top: 100px;
+    padding-bottom: 60px;
     overflow: hidden;
     background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.15) 0%, rgba(0, 0, 0, 0) 50%);
 }
@@ -500,7 +501,8 @@ body {
 .hero-image {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding-top: 20px;
     animation: fadeInUp 0.8s ease-out 0.2s backwards;
     position: relative;
 }
@@ -582,6 +584,7 @@ body {
 .brain-signal-analyzer {
     width: 100%;
     max-width: 800px;
+    margin-bottom: 60px;
     background: linear-gradient(135deg, rgba(10, 15, 30, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);
     border-radius: 16px;
     padding: 16px;
@@ -701,7 +704,7 @@ body {
 .monitor-logo-header {
     background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
     border-radius: 14px;
-    padding: 20px 28px;
+    padding: 20px 50px;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -711,9 +714,9 @@ body {
 }
 
 .monitor-logo {
-    height: 48px;
+    height: 70px;
     width: auto;
-    max-width: 240px;
+    max-width: 400px;
     object-fit: contain;
 }
 
@@ -3257,8 +3260,8 @@ body {
     }
     
     .monitor-logo {
-        height: 40px;
-        max-width: 200px;
+        height: 56px;
+        max-width: 340px;
     }
     
     .vitals-grid {
