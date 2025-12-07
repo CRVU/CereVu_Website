@@ -897,8 +897,17 @@ class BrainSignalAnalyzer {
         // Get current segment color for the needle
         const needleColor = this.getValueColor(colorScheme, normalizedValue);
         
-        // Triangle needle pointing to value
-        const needleAngle = startAngle + normalizedValue * totalAngle;
+        // Calculate precise needle angle aligned with segments
+        // Account for gaps between segments
+        const segmentIndex = Math.min(normalizedValue * numSegments, numSegments - 0.001);
+        const whichSegment = Math.floor(segmentIndex);
+        const withinSegment = segmentIndex - whichSegment;
+        
+        // Calculate angle: segment start + position within segment
+        const segmentStart = startAngle + whichSegment * (segmentAngle + gapAngle);
+        const needleAngle = segmentStart + withinSegment * segmentAngle;
+        
+        // Triangle needle dimensions
         const needleBaseRadius = w * 0.18;      // Start just outside center number
         const needleTipRadius = innerRadius - 4; // End just before the gauge arc
         const perpAngle = needleAngle + Math.PI / 2;
