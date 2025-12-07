@@ -489,6 +489,9 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1;
+    min-width: 100px;
+    display: inline-block;
+    text-align: center;
 }
 
 .stat-label {

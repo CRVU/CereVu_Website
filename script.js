@@ -90,33 +90,33 @@ window.addEventListener('scroll', () => {
 });
 
 // Dynamic stat counter animation
-function animateCounter(element, target, duration = 2000) {
+function animateCounter(element, target, type, duration = 2000) {
     let start = 0;
     const increment = target / (duration / 16);
     
     const counter = setInterval(() => {
         start += increment;
         if (start >= target) {
-            element.textContent = formatNumber(target);
+            element.textContent = formatNumber(target, type);
             clearInterval(counter);
         } else {
-            element.textContent = formatNumber(Math.floor(start));
+            element.textContent = formatNumber(Math.floor(start), type);
         }
     }, 16);
 }
 
-function formatNumber(num) {
-    if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace('.0', '') + 'K+';
-    }
-    if (num >= 100) {
+function formatNumber(num, type) {
+    if (type === 'plus') {
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1).replace('.0', '') + 'K+';
+        }
+        return num.toString() + '+';
+    } else if (type === 'percentage') {
+        return '>' + Math.floor(num).toString() + '%';
+    } else if (type === 'plain') {
         return num.toString();
     }
-    // For percentages >= 90, show with > prefix
-    if (num >= 90) {
-        return '>' + Math.floor(num).toString() + '%';
-    }
-    return num.toString() + '%';
+    return num.toString();
 }
 
 // Trigger counter animation when stats are in view
@@ -128,13 +128,13 @@ const statsObserver = new IntersectionObserver((entries) => {
                 const text = stat.textContent;
                 if (text.includes('+')) {
                     const num = parseFloat(text) * (text.includes('K') ? 1000 : 1);
-                    animateCounter(stat, num);
+                    animateCounter(stat, num, 'plus');
                 } else if (text.includes('%')) {
                     // Handle ">" prefix in percentage (e.g., ">90%")
                     const cleanText = text.replace('>', '');
                     const num = parseFloat(cleanText);
                     if (!isNaN(num)) {
-                        animateCounter(stat, num);
+                        animateCounter(stat, num, 'percentage');
                     }
                 } else if (text.includes('M')) {
                     stat.style.opacity = '0';
@@ -142,6 +142,9 @@ const statsObserver = new IntersectionObserver((entries) => {
                         stat.style.transition = 'opacity 0.5s ease-in';
                         stat.style.opacity = '1';
                     }, 200);
+                } else {
+                    // Plain number (like "5") - keep constant, no animation
+                    stat.style.opacity = '1';
                 }
             });
             statsObserver.unobserve(entry.target);
