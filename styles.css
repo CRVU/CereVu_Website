@@ -700,20 +700,20 @@ body {
 /* Monitor Logo Header */
 .monitor-logo-header {
     background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-    border-radius: 12px;
-    padding: 14px 20px;
-    margin-bottom: 14px;
+    border-radius: 14px;
+    padding: 20px 28px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(14, 165, 233, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(14, 165, 233, 0.2);
 }
 
 .monitor-logo {
-    height: 36px;
+    height: 48px;
     width: auto;
-    max-width: 180px;
+    max-width: 240px;
     object-fit: contain;
 }
 
@@ -762,10 +762,10 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(145deg, #0a0e14 0%, #050810 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(30, 58, 95, 0.5);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(160deg, #0c1220 0%, #060a10 100%);
+    border-radius: 14px;
+    border: 1px solid rgba(30, 60, 100, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .vital-gauge-canvas {
@@ -780,52 +780,42 @@ body {
 .vital-value-display {
     text-align: center;
     z-index: 10;
-    position: relative;
-    top: 12px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .vital-value {
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 700;
     color: #ffffff;
     line-height: 1;
     margin-bottom: 4px;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -1px;
 }
 
 .vital-label {
-    font-size: 12px;
-    color: rgba(156, 163, 175, 0.9);
-    font-weight: 600;
+    font-size: 11px;
+    color: rgba(180, 190, 205, 0.95);
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .vital-label sub {
-    font-size: 10px;
+    font-size: 9px;
     vertical-align: baseline;
 }
 
-/* Specific vital sign colors */
-.rso2-value {
-    color: #38BDF8 !important;
-}
-
-.spo2-value {
-    color: #ffffff !important;
-}
-
-.hr-value {
-    color: #10B981 !important;
-}
-
-.rr-value {
-    color: #38BDF8 !important;
-}
-
-/* Temperature value color */
-.temp-value {
-    color: #F59E0B !important;
+/* Vital sign value colors - set dynamically via JS to match gauge */
+.vital-value {
+    transition: color 0.3s ease;
 }
 
 /* 5-gauge grid responsive */
@@ -3257,18 +3247,18 @@ body {
     .masimo-monitor {
         padding: 14px !important;
         max-width: 100%;
-        border-radius: 20px;
+        border-radius: 18px;
     }
     
     .monitor-logo-header {
-        padding: 12px 16px;
+        padding: 16px 20px;
         margin-bottom: 12px;
         border-radius: 12px;
     }
     
     .monitor-logo {
-        height: 32px;
-        max-width: 160px;
+        height: 40px;
+        max-width: 200px;
     }
     
     .vitals-grid {
@@ -3276,15 +3266,16 @@ body {
     }
     
     .vital-value {
-        font-size: 26px;
+        font-size: 30px;
     }
     
     .vital-label {
-        font-size: 11px;
+        font-size: 10px;
+        letter-spacing: 0.5px;
     }
     
     .vital-value-display {
-        top: 10px;
+        transform: translate(-50%, -20%);
     }
     
     .vital-gauge-container {
@@ -3300,7 +3291,7 @@ body {
     }
     
     .waveform-panel {
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         padding: 8px;
         border-radius: 12px;
     }

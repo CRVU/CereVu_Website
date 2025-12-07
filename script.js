@@ -745,37 +745,86 @@ class BrainSignalAnalyzer {
     // Pre-computed color schemes for performance
     getSegmentColors(colorScheme, position) {
         // Returns [color, activeColor] based on position (0-1)
+        // rSO2: 0-100% -> <50 red, 50-60 orange, 60-80 green, >80 cyan
         if (colorScheme === 'rso2') {
-            if (position < 0.2) return ['#EF4444', '#FF6B6B'];
-            if (position < 0.4) return ['#F97316', '#FB923C'];
+            if (position < 0.5) return ['#EF4444', '#FF6B6B'];
+            if (position < 0.6) return ['#F97316', '#FB923C'];
             if (position < 0.8) return ['#10B981', '#34D399'];
             return ['#38BDF8', '#7DD3FC'];
         }
+        // SpO2: 0-100% -> <90 red, 90-95 orange, >95 green
         if (colorScheme === 'spo2') {
-            if (position < 0.17) return ['#EF4444', '#FF6B6B'];
-            if (position < 0.5) return ['#F97316', '#FB923C'];
-            if (position < 0.67) return ['#F59E0B', '#FBBF24'];
+            if (position < 0.9) return ['#EF4444', '#FF6B6B'];
+            if (position < 0.95) return ['#F97316', '#FB923C'];
             return ['#10B981', '#34D399'];
         }
+        // HR: 0-220 -> <40 blue, 40-60 yellow, 60-100 green, 100-150 orange, >150 red
         if (colorScheme === 'hr') {
-            if (position < 0.11) return ['#F59E0B', '#FBBF24'];
-            if (position < 0.56) return ['#10B981', '#34D399'];
-            if (position < 0.78) return ['#F97316', '#FB923C'];
+            if (position < 0.18) return ['#3B82F6', '#60A5FA'];
+            if (position < 0.27) return ['#F59E0B', '#FBBF24'];
+            if (position < 0.45) return ['#10B981', '#34D399'];
+            if (position < 0.68) return ['#F97316', '#FB923C'];
             return ['#EF4444', '#FF6B6B'];
         }
+        // RR: 0-60 -> <8 blue, 8-12 yellow, 12-20 green, 20-30 orange, >30 red
         if (colorScheme === 'rr') {
-            if (position < 0.25) return ['#F59E0B', '#FBBF24'];
-            if (position < 0.58) return ['#10B981', '#34D399'];
-            if (position < 0.75) return ['#F97316', '#FB923C'];
+            if (position < 0.13) return ['#3B82F6', '#60A5FA'];
+            if (position < 0.2) return ['#F59E0B', '#FBBF24'];
+            if (position < 0.33) return ['#10B981', '#34D399'];
+            if (position < 0.5) return ['#F97316', '#FB923C'];
             return ['#EF4444', '#FF6B6B'];
         }
+        // Temp: 28-42°C -> <35 blue, 35-36.5 light blue, 36.5-37.5 green, 37.5-39 orange, >39 red
         if (colorScheme === 'temp') {
-            if (position < 0.25) return ['#3B82F6', '#60A5FA'];
-            if (position < 0.625) return ['#10B981', '#34D399'];
-            if (position < 0.875) return ['#F97316', '#FB923C'];
+            if (position < 0.5) return ['#3B82F6', '#60A5FA'];
+            if (position < 0.6) return ['#60A5FA', '#93C5FD'];
+            if (position < 0.68) return ['#10B981', '#34D399'];
+            if (position < 0.79) return ['#F97316', '#FB923C'];
             return ['#EF4444', '#FF6B6B'];
         }
         return ['#10B981', '#34D399'];
+    }
+    
+    // Get the color for the current value position
+    getValueColor(colorScheme, normalizedValue) {
+        // rSO2: 0-100% -> <50 critical, 50-60 low, 60-80 normal, >80 excellent
+        if (colorScheme === 'rso2') {
+            if (normalizedValue < 0.5) return '#EF4444';   // <50%
+            if (normalizedValue < 0.6) return '#F97316';   // 50-60%
+            if (normalizedValue < 0.8) return '#10B981';   // 60-80%
+            return '#38BDF8';                               // >80%
+        }
+        // SpO2: 0-100% -> <90 critical, 90-95 low, 95-100 normal
+        if (colorScheme === 'spo2') {
+            if (normalizedValue < 0.9) return '#EF4444';   // <90%
+            if (normalizedValue < 0.95) return '#F97316';  // 90-95%
+            return '#10B981';                              // >95%
+        }
+        // HR: 0-220 -> <40 critical, 40-60 low, 60-100 normal, 100-150 elevated, >150 critical
+        if (colorScheme === 'hr') {
+            if (normalizedValue < 0.18) return '#3B82F6';  // <40 (bradycardia)
+            if (normalizedValue < 0.27) return '#F59E0B';  // 40-60
+            if (normalizedValue < 0.45) return '#10B981';  // 60-100
+            if (normalizedValue < 0.68) return '#F97316';  // 100-150
+            return '#EF4444';                              // >150
+        }
+        // RR: 0-60 -> <8 low, 8-12 borderline, 12-20 normal, 20-30 elevated, >30 critical
+        if (colorScheme === 'rr') {
+            if (normalizedValue < 0.13) return '#3B82F6';  // <8
+            if (normalizedValue < 0.2) return '#F59E0B';   // 8-12
+            if (normalizedValue < 0.33) return '#10B981';  // 12-20
+            if (normalizedValue < 0.5) return '#F97316';   // 20-30
+            return '#EF4444';                              // >30
+        }
+        // Temp: 28-42°C -> <35 hypothermia, 35-36.5 cool, 36.5-37.5 normal, 37.5-39 fever, >39 high
+        if (colorScheme === 'temp') {
+            if (normalizedValue < 0.5) return '#3B82F6';   // <35°C
+            if (normalizedValue < 0.6) return '#60A5FA';   // 35-36.5°C
+            if (normalizedValue < 0.68) return '#10B981';  // 36.5-37.5°C
+            if (normalizedValue < 0.79) return '#F97316';  // 37.5-39°C
+            return '#EF4444';                              // >39°C
+        }
+        return '#FFFFFF';
     }
     
     // Optimized gauge drawing - clean and efficient
@@ -797,10 +846,10 @@ class BrainSignalAnalyzer {
         ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
         ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(15, 25, 40, 0.8)';
+        ctx.fillStyle = 'rgba(20, 30, 45, 0.7)';
         ctx.fill();
         
-        // Draw segments (reduced to 12 for performance)
+        // Draw segments
         const numSegments = 12;
         const gapAngle = 0.03;
         const segmentAngle = (totalAngle - (numSegments - 1) * gapAngle) / numSegments;
@@ -814,7 +863,7 @@ class BrainSignalAnalyzer {
             const position = i / (numSegments - 1);
             const isActive = i <= valuePosition;
             
-            const [baseColor, lightColor] = this.getSegmentColors(colorScheme, position);
+            const [baseColor] = this.getSegmentColors(colorScheme, position);
             
             ctx.beginPath();
             ctx.arc(centerX, centerY, outerRadius, segStart, segEnd);
@@ -824,35 +873,18 @@ class BrainSignalAnalyzer {
             if (isActive) {
                 ctx.fillStyle = baseColor;
             } else {
-                // Dimmed inactive segments
-                ctx.fillStyle = `rgba(30, 40, 60, 0.6)`;
+                ctx.fillStyle = 'rgba(40, 50, 70, 0.5)';
             }
             ctx.fill();
-            
-            // Subtle highlight on active segments
-            if (isActive) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, outerRadius - 1, segStart, segEnd);
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
         }
         
-        // Inner ring shadow
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, innerRadius, startAngle, endAngle);
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
         // Scale labels
-        ctx.fillStyle = 'rgba(156, 163, 175, 0.9)';
-        ctx.font = `600 ${w * 0.075}px Inter, sans-serif`;
+        ctx.fillStyle = 'rgba(140, 150, 165, 0.85)';
+        ctx.font = `500 ${w * 0.07}px Inter, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        const labelRadius = outerRadius + w * 0.10;
+        const labelRadius = outerRadius + w * 0.11;
         ctx.fillText(leftLabel, 
             centerX + labelRadius * Math.cos(startAngle), 
             centerY + labelRadius * Math.sin(startAngle)
@@ -862,82 +894,75 @@ class BrainSignalAnalyzer {
             centerY + labelRadius * Math.sin(endAngle)
         );
         
-        // Needle
+        // Get current segment color for the needle
+        const needleColor = this.getValueColor(colorScheme, normalizedValue);
+        
+        // Triangle needle pointing to value
         const needleAngle = startAngle + normalizedValue * totalAngle;
-        const needleLength = outerRadius + 3;
-        const needleTailLength = innerRadius * 0.2;
-        
-        const tipX = centerX + needleLength * Math.cos(needleAngle);
-        const tipY = centerY + needleLength * Math.sin(needleAngle);
-        const tailX = centerX - needleTailLength * Math.cos(needleAngle);
-        const tailY = centerY - needleTailLength * Math.sin(needleAngle);
-        
+        const needleBaseRadius = w * 0.18;      // Start just outside center number
+        const needleTipRadius = innerRadius - 4; // End just before the gauge arc
         const perpAngle = needleAngle + Math.PI / 2;
-        const needleWidth = 2.5;
+        const triangleWidth = 5;
         
+        // Draw triangle
         ctx.beginPath();
-        ctx.moveTo(tipX, tipY);
-        ctx.lineTo(centerX + needleWidth * Math.cos(perpAngle), centerY + needleWidth * Math.sin(perpAngle));
-        ctx.lineTo(tailX, tailY);
-        ctx.lineTo(centerX - needleWidth * Math.cos(perpAngle), centerY - needleWidth * Math.sin(perpAngle));
+        // Tip of triangle (pointing toward gauge)
+        ctx.moveTo(
+            centerX + needleTipRadius * Math.cos(needleAngle),
+            centerY + needleTipRadius * Math.sin(needleAngle)
+        );
+        // Left base corner
+        ctx.lineTo(
+            centerX + needleBaseRadius * Math.cos(needleAngle) + triangleWidth * Math.cos(perpAngle),
+            centerY + needleBaseRadius * Math.sin(needleAngle) + triangleWidth * Math.sin(perpAngle)
+        );
+        // Right base corner
+        ctx.lineTo(
+            centerX + needleBaseRadius * Math.cos(needleAngle) - triangleWidth * Math.cos(perpAngle),
+            centerY + needleBaseRadius * Math.sin(needleAngle) - triangleWidth * Math.sin(perpAngle)
+        );
         ctx.closePath();
-        ctx.fillStyle = '#F97316';
-        ctx.fill();
-        
-        // Center pivot
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, w * 0.04, 0, 2 * Math.PI);
-        ctx.fillStyle = '#F97316';
-        ctx.fill();
-        
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, w * 0.025, 0, 2 * Math.PI);
-        ctx.fillStyle = '#7C2D12';
-        ctx.fill();
-        
-        ctx.beginPath();
-        ctx.arc(centerX - 1, centerY - 1, w * 0.012, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.fillStyle = needleColor;
         ctx.fill();
     }
     
     // Draw all gauges with smoothed values
     drawAllGauges() {
-        // rSO2 gauge (55-80%) - Regional cerebral oxygen saturation
+        // rSO2 gauge (0-100%) - Regional cerebral oxygen saturation
         this.drawMasimoGauge(
             this.rso2GaugeCtx, this.rso2GaugeCanvas,
-            this.displayVitals.rso2, 55, 80, 'rso2', '55', '80'
+            this.displayVitals.rso2, 0, 100, 'rso2', '0', '100'
         );
         
-        // SpO2 gauge (88-100%)
+        // SpO2 gauge (0-100%) - Peripheral oxygen saturation
         if (this.spo2GaugeCtx) {
             this.drawMasimoGauge(
                 this.spo2GaugeCtx, this.spo2GaugeCanvas,
-                this.displayVitals.spo2, 88, 100, 'spo2', '88', '100'
+                this.displayVitals.spo2, 0, 100, 'spo2', '0', '100'
             );
         }
         
-        // Heart Rate gauge (50-140 bpm)
+        // Heart Rate gauge (0-220 bpm) - Max theoretical HR
         if (this.hrGaugeCtx) {
             this.drawMasimoGauge(
                 this.hrGaugeCtx, this.hrGaugeCanvas,
-                this.displayVitals.hr, 50, 140, 'hr', '50', '140'
+                this.displayVitals.hr, 0, 220, 'hr', '0', '220'
             );
         }
         
-        // Respiratory Rate gauge (6-30 breaths/min)
+        // Respiratory Rate gauge (0-60 breaths/min)
         if (this.rrGaugeCtx) {
             this.drawMasimoGauge(
                 this.rrGaugeCtx, this.rrGaugeCanvas,
-                this.displayVitals.rr, 6, 30, 'rr', '6', '30'
+                this.displayVitals.rr, 0, 60, 'rr', '0', '60'
             );
         }
         
-        // Temperature gauge (35-39 °C)
+        // Temperature gauge (28-42 °C) - Survivable range
         if (this.tempGaugeCtx) {
             this.drawMasimoGauge(
                 this.tempGaugeCtx, this.tempGaugeCanvas,
-                this.displayVitals.temp, 35, 39, 'temp', '35', '39'
+                this.displayVitals.temp, 28, 42, 'temp', '28', '42'
             );
         }
     }
@@ -951,85 +976,44 @@ class BrainSignalAnalyzer {
         const rr = this.displayVitals.rr;
         const temp = this.displayVitals.temp;
         
-        // Update rSO2 value display - cerebral oxygenation
+        // Update rSO2 value display - color matches gauge segment
         const rso2El = document.getElementById('rso2Value');
         if (rso2El) {
             rso2El.textContent = Math.round(rso2);
-            
-            // Color based on rSO2 level
-            if (rso2 >= 75) {
-                rso2El.style.color = '#38BDF8'; // >75% Good (Cyan)
-            } else if (rso2 >= 65) {
-                rso2El.style.color = '#10B981'; // 65-75% Normal (Green)
-            } else if (rso2 >= 60) {
-                rso2El.style.color = '#F97316'; // 60-65% Low (Orange)
-            } else {
-                rso2El.style.color = '#EF4444'; // <60% Critical (Red)
-            }
+            const normalizedRso2 = rso2 / 100;
+            rso2El.style.color = this.getValueColor('rso2', normalizedRso2);
         }
         
-        // Update SpO2 - peripheral oxygen saturation
+        // Update SpO2 - color matches gauge segment
         const spo2El = document.getElementById('spo2Value');
         if (spo2El) {
             spo2El.textContent = Math.round(spo2);
-            
-            if (spo2 >= 96) {
-                spo2El.style.color = '#10B981'; // >96% Normal (Green)
-            } else if (spo2 >= 94) {
-                spo2El.style.color = '#F59E0B'; // 94-96% Acceptable (Yellow)
-            } else if (spo2 >= 90) {
-                spo2El.style.color = '#F97316'; // 90-94% Low (Orange)
-            } else {
-                spo2El.style.color = '#EF4444'; // <90% Critical (Red)
-            }
+            const normalizedSpo2 = spo2 / 100;
+            spo2El.style.color = this.getValueColor('spo2', normalizedSpo2);
         }
         
-        // Update Heart Rate
+        // Update Heart Rate - color matches gauge segment
         const hrEl = document.getElementById('hrValue');
         if (hrEl) {
             hrEl.textContent = Math.round(hr);
-            
-            if (hr >= 60 && hr <= 100) {
-                hrEl.style.color = '#10B981'; // 60-100 Normal (Green)
-            } else if (hr > 100 && hr <= 120) {
-                hrEl.style.color = '#F97316'; // 100-120 Elevated (Orange)
-            } else if (hr > 120) {
-                hrEl.style.color = '#EF4444'; // >120 Tachycardia (Red)
-            } else {
-                hrEl.style.color = '#F59E0B'; // <60 Bradycardia (Yellow)
-            }
+            const normalizedHr = hr / 220;
+            hrEl.style.color = this.getValueColor('hr', normalizedHr);
         }
         
-        // Update Respiratory Rate
+        // Update Respiratory Rate - color matches gauge segment
         const rrEl = document.getElementById('rrValue');
         if (rrEl) {
             rrEl.textContent = Math.round(rr);
-            
-            if (rr >= 12 && rr <= 20) {
-                rrEl.style.color = '#10B981'; // 12-20 Normal (Green)
-            } else if (rr > 20 && rr <= 24) {
-                rrEl.style.color = '#F97316'; // 20-24 Elevated (Orange)
-            } else if (rr > 24) {
-                rrEl.style.color = '#EF4444'; // >24 High (Red)
-            } else {
-                rrEl.style.color = '#F59E0B'; // <12 Low (Yellow)
-            }
+            const normalizedRr = rr / 60;
+            rrEl.style.color = this.getValueColor('rr', normalizedRr);
         }
         
-        // Update Body Temperature
+        // Update Body Temperature - color matches gauge segment
         const tempEl = document.getElementById('tempValue');
         if (tempEl) {
             tempEl.textContent = temp.toFixed(1);
-            
-            if (temp >= 38.5) {
-                tempEl.style.color = '#EF4444'; // >38.5 High fever (Red)
-            } else if (temp >= 37.5) {
-                tempEl.style.color = '#F97316'; // 37.5-38.5 Fever (Orange)
-            } else if (temp >= 36.0) {
-                tempEl.style.color = '#10B981'; // 36-37.5 Normal (Green)
-            } else {
-                tempEl.style.color = '#3B82F6'; // <36 Hypothermia (Blue)
-            }
+            const normalizedTemp = (temp - 28) / (42 - 28);
+            tempEl.style.color = this.getValueColor('temp', normalizedTemp);
         }
     }
     
