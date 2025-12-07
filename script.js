@@ -690,7 +690,7 @@ class BrainSignalAnalyzer {
         }
     }
     
-    // Draw a single waveform channel
+    // Draw a single waveform channel - optimized
     drawWaveform(ctx, buffer, width, channelHeight, yOffset, color, lineWidth) {
         const displaySamples = Math.floor(this.displayWindowSeconds * this.displaySampleRate);
         const startIdx = Math.max(0, buffer.length - displaySamples);
@@ -700,22 +700,18 @@ class BrainSignalAnalyzer {
         
         const centerY = yOffset + channelHeight * 0.5;
         const amplitude = channelHeight * 0.4;
+        const sampleCount = samples.length;
         
-        // Draw waveform with anti-aliasing
+        // Downsample for performance - draw every 2nd point
+        const step = 2;
+        
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.lineWidth = lineWidth;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
         
-        // Add subtle glow
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 4;
-        
-        for (let i = 0; i < samples.length; i++) {
-            const x = (i / samples.length) * width;
-            // Signal is normalized 0-1, center it around 0.5
-            const normalizedValue = (samples[i] - 0.5) * 2; // Convert to -1 to 1 range
+        for (let i = 0; i < sampleCount; i += step) {
+            const x = (i / sampleCount) * width;
+            const normalizedValue = (samples[i] - 0.5) * 2;
             const y = centerY - normalizedValue * amplitude;
             
             if (i === 0) {
@@ -726,7 +722,6 @@ class BrainSignalAnalyzer {
         }
         
         ctx.stroke();
-        ctx.shadowBlur = 0;
     }
     
     // Clamp vitals to physiological ranges
@@ -747,90 +742,117 @@ class BrainSignalAnalyzer {
         this.displayVitals.temp = this.lerp(this.displayVitals.temp, this.vitals.temp, this.smoothing);
     }
     
-    // Draw Masimo-style gauge with discrete segments
+    // Pre-computed color schemes for performance
+    getSegmentColors(colorScheme, position) {
+        // Returns [color, activeColor] based on position (0-1)
+        if (colorScheme === 'rso2') {
+            if (position < 0.2) return ['#EF4444', '#FF6B6B'];
+            if (position < 0.4) return ['#F97316', '#FB923C'];
+            if (position < 0.8) return ['#10B981', '#34D399'];
+            return ['#38BDF8', '#7DD3FC'];
+        }
+        if (colorScheme === 'spo2') {
+            if (position < 0.17) return ['#EF4444', '#FF6B6B'];
+            if (position < 0.5) return ['#F97316', '#FB923C'];
+            if (position < 0.67) return ['#F59E0B', '#FBBF24'];
+            return ['#10B981', '#34D399'];
+        }
+        if (colorScheme === 'hr') {
+            if (position < 0.11) return ['#F59E0B', '#FBBF24'];
+            if (position < 0.56) return ['#10B981', '#34D399'];
+            if (position < 0.78) return ['#F97316', '#FB923C'];
+            return ['#EF4444', '#FF6B6B'];
+        }
+        if (colorScheme === 'rr') {
+            if (position < 0.25) return ['#F59E0B', '#FBBF24'];
+            if (position < 0.58) return ['#10B981', '#34D399'];
+            if (position < 0.75) return ['#F97316', '#FB923C'];
+            return ['#EF4444', '#FF6B6B'];
+        }
+        if (colorScheme === 'temp') {
+            if (position < 0.25) return ['#3B82F6', '#60A5FA'];
+            if (position < 0.625) return ['#10B981', '#34D399'];
+            if (position < 0.875) return ['#F97316', '#FB923C'];
+            return ['#EF4444', '#FF6B6B'];
+        }
+        return ['#10B981', '#34D399'];
+    }
+    
+    // Optimized gauge drawing - clean and efficient
     drawMasimoGauge(ctx, canvas, value, minVal, maxVal, colorScheme, leftLabel, rightLabel) {
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2 + 15;
-        const outerRadius = canvas.width * 0.45;
-        const innerRadius = canvas.width * 0.3;
+        const w = canvas.width;
+        const centerX = w / 2;
+        const centerY = w / 2 + 10;
+        const outerRadius = w * 0.42;
+        const innerRadius = w * 0.28;
         
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, w, w);
         
-        // Arc angles (semi-circular, like Masimo)
         const startAngle = 0.75 * Math.PI;
         const endAngle = 2.25 * Math.PI;
         const totalAngle = endAngle - startAngle;
         
-        // Number of segments
+        // Background arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+        ctx.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(15, 25, 40, 0.8)';
+        ctx.fill();
+        
+        // Draw segments (reduced to 12 for performance)
         const numSegments = 12;
         const gapAngle = 0.03;
         const segmentAngle = (totalAngle - (numSegments - 1) * gapAngle) / numSegments;
         
-        // Draw discrete segments
+        const normalizedValue = Math.max(0, Math.min(1, (value - minVal) / (maxVal - minVal)));
+        const valuePosition = Math.floor(normalizedValue * numSegments);
+        
         for (let i = 0; i < numSegments; i++) {
             const segStart = startAngle + i * (segmentAngle + gapAngle);
             const segEnd = segStart + segmentAngle;
             const position = i / (numSegments - 1);
+            const isActive = i <= valuePosition;
             
-            // Get color based on scheme - clinically accurate colors
-            let segmentColor;
-            if (colorScheme === 'rso2') {
-                // rSO2 (55-80%): Cerebral oxygen saturation
-                // <60%: Critical (Red), 60-65%: Low (Orange), 65-75%: Normal (Green), >75%: Good (Cyan)
-                if (position < 0.2) segmentColor = '#EF4444';      // <60% Critical
-                else if (position < 0.4) segmentColor = '#F97316'; // 60-65% Low
-                else if (position < 0.8) segmentColor = '#10B981'; // 65-75% Normal (Green)
-                else segmentColor = '#38BDF8';                      // >75% Good
-            } else if (colorScheme === 'spo2') {
-                // SpO2 (88-100%): Peripheral oxygen saturation
-                // <90%: Critical (Red), 90-94%: Low (Orange), 94-96%: Acceptable (Yellow), >96%: Normal (Green)
-                if (position < 0.17) segmentColor = '#EF4444';     // <90% Critical
-                else if (position < 0.5) segmentColor = '#F97316';  // 90-94% Low
-                else if (position < 0.67) segmentColor = '#F59E0B'; // 94-96% Acceptable
-                else segmentColor = '#10B981';                       // >96% Normal (Green)
-            } else if (colorScheme === 'hr') {
-                // HR (50-140 bpm): Heart rate
-                // <60: Bradycardia (Yellow), 60-100: Normal (Green), >100: Tachycardia (Orange/Red)
-                if (position < 0.11) segmentColor = '#F59E0B';     // <60 Bradycardia
-                else if (position < 0.56) segmentColor = '#10B981'; // 60-100 Normal (Green)
-                else if (position < 0.78) segmentColor = '#F97316'; // 100-120 Elevated
-                else segmentColor = '#EF4444';                       // >120 Tachycardia
-            } else if (colorScheme === 'rr') {
-                // RR (6-30 breaths/min): Respiratory rate
-                // <12: Low (Yellow), 12-20: Normal (Green), >20: High (Orange/Red)
-                if (position < 0.25) segmentColor = '#F59E0B';     // <12 Low
-                else if (position < 0.58) segmentColor = '#10B981'; // 12-20 Normal (Green)
-                else if (position < 0.75) segmentColor = '#F97316'; // 20-24 Elevated
-                else segmentColor = '#EF4444';                       // >24 High
-            } else if (colorScheme === 'temp') {
-                // Temperature (35-39°C): Body temperature
-                // <36: Hypothermia (Blue), 36-37.5: Normal (Green), 37.5-38.5: Fever (Yellow/Orange), >38.5: High fever (Red)
-                if (position < 0.25) segmentColor = '#3B82F6';     // <36 Hypothermia (Blue)
-                else if (position < 0.625) segmentColor = '#10B981'; // 36-37.5 Normal (Green)
-                else if (position < 0.875) segmentColor = '#F97316'; // 37.5-38.5 Fever (Orange)
-                else segmentColor = '#EF4444';                        // >38.5 High fever (Red)
-            } else {
-                // Default
-                if (position < 0.33) segmentColor = '#F59E0B';
-                else if (position < 0.66) segmentColor = '#10B981';
-                else segmentColor = '#EF4444';
-            }
+            const [baseColor, lightColor] = this.getSegmentColors(colorScheme, position);
             
             ctx.beginPath();
             ctx.arc(centerX, centerY, outerRadius, segStart, segEnd);
             ctx.arc(centerX, centerY, innerRadius, segEnd, segStart, true);
             ctx.closePath();
-            ctx.fillStyle = segmentColor;
+            
+            if (isActive) {
+                ctx.fillStyle = baseColor;
+            } else {
+                // Dimmed inactive segments
+                ctx.fillStyle = `rgba(30, 40, 60, 0.6)`;
+            }
             ctx.fill();
+            
+            // Subtle highlight on active segments
+            if (isActive) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, outerRadius - 1, segStart, segEnd);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
         }
         
-        // Draw scale numbers
-        ctx.fillStyle = '#9CA3AF';
-        ctx.font = `${canvas.width * 0.07}px Inter, sans-serif`;
+        // Inner ring shadow
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, innerRadius, startAngle, endAngle);
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Scale labels
+        ctx.fillStyle = 'rgba(156, 163, 175, 0.9)';
+        ctx.font = `600 ${w * 0.075}px Inter, sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        const labelRadius = outerRadius + canvas.width * 0.08;
+        const labelRadius = outerRadius + w * 0.10;
         ctx.fillText(leftLabel, 
             centerX + labelRadius * Math.cos(startAngle), 
             centerY + labelRadius * Math.sin(startAngle)
@@ -840,37 +862,42 @@ class BrainSignalAnalyzer {
             centerY + labelRadius * Math.sin(endAngle)
         );
         
-        // Calculate needle position
-        const normalizedValue = (value - minVal) / (maxVal - minVal);
-        const clampedValue = Math.max(0, Math.min(1, normalizedValue));
-        const needleAngle = startAngle + clampedValue * totalAngle;
+        // Needle
+        const needleAngle = startAngle + normalizedValue * totalAngle;
         const needleLength = outerRadius + 3;
-        const needleTailLength = innerRadius * 0.3;
+        const needleTailLength = innerRadius * 0.2;
         
-        // Draw needle
+        const tipX = centerX + needleLength * Math.cos(needleAngle);
+        const tipY = centerY + needleLength * Math.sin(needleAngle);
+        const tailX = centerX - needleTailLength * Math.cos(needleAngle);
+        const tailY = centerY - needleTailLength * Math.sin(needleAngle);
+        
+        const perpAngle = needleAngle + Math.PI / 2;
+        const needleWidth = 2.5;
+        
         ctx.beginPath();
-        ctx.strokeStyle = '#F97316';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.moveTo(
-            centerX - needleTailLength * Math.cos(needleAngle),
-            centerY - needleTailLength * Math.sin(needleAngle)
-        );
-        ctx.lineTo(
-            centerX + needleLength * Math.cos(needleAngle),
-            centerY + needleLength * Math.sin(needleAngle)
-        );
-        ctx.stroke();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(centerX + needleWidth * Math.cos(perpAngle), centerY + needleWidth * Math.sin(perpAngle));
+        ctx.lineTo(tailX, tailY);
+        ctx.lineTo(centerX - needleWidth * Math.cos(perpAngle), centerY - needleWidth * Math.sin(perpAngle));
+        ctx.closePath();
+        ctx.fillStyle = '#F97316';
+        ctx.fill();
         
         // Center pivot
         ctx.beginPath();
-        ctx.arc(centerX, centerY, canvas.width * 0.035, 0, 2 * Math.PI);
+        ctx.arc(centerX, centerY, w * 0.04, 0, 2 * Math.PI);
         ctx.fillStyle = '#F97316';
         ctx.fill();
         
         ctx.beginPath();
-        ctx.arc(centerX, centerY, canvas.width * 0.015, 0, 2 * Math.PI);
-        ctx.fillStyle = '#000000';
+        ctx.arc(centerX, centerY, w * 0.025, 0, 2 * Math.PI);
+        ctx.fillStyle = '#7C2D12';
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(centerX - 1, centerY - 1, w * 0.012, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         ctx.fill();
     }
     
@@ -1006,11 +1033,19 @@ class BrainSignalAnalyzer {
         }
     }
     
-    // Animation loop with proper timing
+    // Animation loop with throttled frame rate for performance
     animate(currentTime) {
-        // Calculate delta time
-        const deltaTime = Math.min(currentTime - this.lastFrameTime, 100); // Cap at 100ms
-        this.lastFrameTime = currentTime;
+        // Throttle to ~30 FPS for better performance
+        const targetFPS = 30;
+        const frameInterval = 1000 / targetFPS;
+        const deltaTime = currentTime - this.lastFrameTime;
+        
+        if (deltaTime < frameInterval) {
+            requestAnimationFrame((t) => this.animate(t));
+            return;
+        }
+        
+        this.lastFrameTime = currentTime - (deltaTime % frameInterval);
         
         // Update physiological state (slow changes)
         this.updatePhysiologicalState(currentTime);
