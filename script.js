@@ -849,9 +849,9 @@ class BrainSignalAnalyzer {
         ctx.fillStyle = 'rgba(20, 30, 45, 0.7)';
         ctx.fill();
         
-        // Draw segments
-        const numSegments = 12;
-        const gapAngle = 0.03;
+        // Draw segments - higher resolution for better color matching
+        const numSegments = 24;
+        const gapAngle = 0.02;
         const segmentAngle = (totalAngle - (numSegments - 1) * gapAngle) / numSegments;
         
         const normalizedValue = Math.max(0, Math.min(1, (value - minVal) / (maxVal - minVal)));
@@ -860,7 +860,7 @@ class BrainSignalAnalyzer {
         for (let i = 0; i < numSegments; i++) {
             const segStart = startAngle + i * (segmentAngle + gapAngle);
             const segEnd = segStart + segmentAngle;
-            const position = i / (numSegments - 1);
+            const position = i / numSegments; // Position from 0 to ~1
             const isActive = i <= valuePosition;
             
             const [baseColor] = this.getSegmentColors(colorScheme, position);
