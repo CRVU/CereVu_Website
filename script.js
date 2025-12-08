@@ -125,8 +125,11 @@ const statsObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             const statNumbers = entry.target.querySelectorAll('.stat-number');
             statNumbers.forEach((stat) => {
-                const text = stat.textContent;
-                if (text.includes('+')) {
+                const text = stat.textContent.trim();
+                // Skip animation for 400+ specifically
+                if (text === '400+') {
+                    stat.style.opacity = '1';
+                } else if (text.includes('+')) {
                     const num = parseFloat(text) * (text.includes('K') ? 1000 : 1);
                     animateCounter(stat, num, 'plus');
                 } else if (text.includes('%')) {
@@ -164,7 +167,12 @@ const clinicalStatsObserver = new IntersectionObserver((entries) => {
             const statLarges = entry.target.querySelectorAll('.stat-large');
             statLarges.forEach((stat, index) => {
                 setTimeout(() => {
-                    const text = stat.textContent;
+                    const text = stat.textContent.trim();
+                    // Skip animation for 400+ specifically
+                    if (text === '400+') {
+                        stat.style.opacity = '1';
+                        return;
+                    }
                     if (text.includes('+') || text.includes('%')) {
                         // Handle ">" prefix (e.g., ">90%")
                         const cleanText = text.replace('>', '');
