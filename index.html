@@ -43,7 +43,6 @@
             </div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
-                <a href="product.html">Product</a>
                 <a href="clinical.html">Clinical Data</a>
                 <a href="about.html">About</a>
                 <a href="privacy.html">Privacy</a>
@@ -59,7 +58,6 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
         <a href="index.html">Home</a>
-        <a href="product.html">Product</a>
         <a href="clinical.html">Clinical Data</a>
         <a href="about.html">About</a>
         <a href="privacy.html">Privacy</a>
@@ -77,22 +75,12 @@
         <div class="container hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    Objectively Measuring <span class="highlight">Pain</span> in Real-Time
+                    Objective <span class="highlight">pain</span> management<br>in real-time
                 </h1>
                 <p class="hero-subtitle">
                     Algorithm-driven wearable sensor for continuous, real-time pain assessment. 
                     Transform pain management with objective, data-driven insights.
                 </p>
-                <div class="hero-buttons">
-                    <a href="about.html#contact" class="btn btn-primary">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                            <polyline points="22,6 12,13 2,6"/>
-                        </svg>
-                        Contact Us
-                    </a>
-                    <a href="product.html" class="btn btn-secondary">Learn More</a>
-                </div>
                 <div class="hero-stats">
                     <div class="stat">
                         <div class="stat-number">400+</div>
@@ -103,50 +91,71 @@
                         <div class="stat-label">Accuracy</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number">$2M</div>
-                        <div class="stat-label">NSF & FDA Grants</div>
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Clinical Studies</div>
                     </div>
                 </div>
             </div>
             <div class="hero-image">
                 <div class="device-glow"></div>
                 <div class="device-mockup">
-                    <div class="sensor-visual">
-                        <img src="assets/hero-logo.png" alt="CereVu Medical" class="hero-logo-image">
-                        <div class="brain-signal-analyzer">
-                            <!-- Pain Assessment Display -->
-                            <div class="pain-panel">
-                                <div class="pain-display-container">
-                                    <div class="pain-gauge">
-                                        <canvas id="painGaugeCanvas" class="pain-gauge-canvas"></canvas>
-                                        <div class="pain-value-display">
-                                            <div class="pain-value" id="currentPainValue">5.2</div>
-                                            <div class="pain-label">Pain Index</div>
-                                        </div>
+                    <div class="sensor-visual monitor-only">
+                        <div class="brain-signal-analyzer masimo-monitor">
+                            <!-- CereVu Logo Header -->
+                            <div class="monitor-logo-header">
+                                <img src="assets/CereVu-Medical_H-logo.png" alt="CereVu Medical" class="monitor-logo">
+                            </div>
+                            
+                            <!-- Waveform Display -->
+                            <div class="waveform-panel">
+                                <canvas id="signalCanvas" class="signal-canvas"></canvas>
+                            </div>
+                            
+                            <!-- Vital Signs Gauges Grid - 5 gauges -->
+                            <div class="vitals-grid-5">
+                                <!-- rSO₂ (Regional Cerebral Oxygen Saturation) -->
+                                <div class="vital-gauge-container">
+                                    <canvas id="rso2GaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value rso2-value" id="rso2Value">68</div>
+                                        <div class="vital-label">rSO<sub>2</sub></div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Time Domain (Raw Signal) -->
-                            <div class="time-domain-panel">
-                                <div class="eeg-display">
-                                    <canvas id="signalCanvas" class="signal-canvas"></canvas>
+                                
+                                <!-- SpO₂ -->
+                                <div class="vital-gauge-container">
+                                    <canvas id="spo2GaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value spo2-value" id="spo2Value">97</div>
+                                        <div class="vital-label">SpO<sub>2</sub></div>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Signal metrics -->
-                            <div class="signal-metrics">
-                                <div class="metric">
-                                    <div class="metric-value" id="confidenceValue">94.2</div>
-                                    <div class="metric-label">Confidence (%)</div>
+                                
+                                <!-- Heart Rate -->
+                                <div class="vital-gauge-container">
+                                    <canvas id="hrGaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value hr-value" id="hrValue">74</div>
+                                        <div class="vital-label">HR</div>
+                                    </div>
                                 </div>
-                                <div class="metric">
-                                    <div class="metric-value" id="snrValue">26.8</div>
-                                    <div class="metric-label">Signal Quality</div>
+                                
+                                <!-- Respiratory Rate -->
+                                <div class="vital-gauge-container">
+                                    <canvas id="rrGaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value rr-value" id="rrValue">15</div>
+                                        <div class="vital-label">RR</div>
+                                    </div>
                                 </div>
-                                <div class="metric">
-                                    <div class="metric-value" id="reliabilityValue">High</div>
-                                    <div class="metric-label">Reliability</div>
+                                
+                                <!-- Body Temperature -->
+                                <div class="vital-gauge-container temp-gauge-container">
+                                    <canvas id="tempGaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value temp-value" id="tempValue">36.7</div>
+                                        <div class="vital-label">Temp °C</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -171,8 +180,8 @@
                 </div>
                 <div class="problem-card">
                     <div class="problem-stat">#1</div>
-                    <h3 class="problem-title">Reason for Visits</h3>
-                    <p class="problem-description">Pain is the number one reason people visit a physician, more than cancer, heart disease, and diabetes combined.</p>
+                    <h3 class="problem-title">Reason for Doctor Visit</h3>
+                    <p class="problem-description">Pain is the number one reason people visit a physician.</p>
                 </div>
                 <div class="problem-card">
                     <div class="problem-stat">70%</div>
@@ -198,32 +207,32 @@
                 <div class="excellence-card">
                     <div class="excellence-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <div class="excellence-stat">>90%</div>
-                    <h3 class="excellence-title">Clinical Accuracy</h3>
-                    <p class="excellence-description">Validated across 400+ patients in peer-reviewed studies</p>
-                </div>
-                <div class="excellence-card">
-                    <div class="excellence-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                         </svg>
                     </div>
                     <div class="excellence-stat">5</div>
-                    <h3 class="excellence-title">Published Studies</h3>
-                    <p class="excellence-description">Rigorous clinical validation with published peer-reviewed research</p>
+                    <h3 class="excellence-title">Clinical Studies</h3>
+                    <p class="excellence-description">Rigorous clinical validation across multiple studies</p>
                 </div>
                 <div class="excellence-card">
                     <div class="excellence-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
-                    <div class="excellence-stat">Stanford</div>
-                    <h3 class="excellence-title">Research Institution</h3>
-                    <p class="excellence-description">Clinical studies conducted at Stanford University</p>
+                    <div class="excellence-stat">400+</div>
+                    <h3 class="excellence-title">Patients</h3>
+                    <p class="excellence-description">Validated across 400+ patients in clinical studies</p>
+                </div>
+                <div class="excellence-card">
+                    <div class="excellence-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <div class="excellence-stat">2</div>
+                    <h3 class="excellence-title">Publications</h3>
+                    <p class="excellence-description">Published peer-reviewed research validating our technology</p>
                 </div>
             </div>
             <div class="cta-section">
@@ -287,21 +296,16 @@
             <div class="why-grid">
                 <div class="why-card">
                     <div class="why-number">01</div>
-                    <h3 class="why-title">Two Decades of Research</h3>
-                    <p class="why-description">Built on 20 years of neuroscience research proving pain can be objectively measured using fMRI technology.</p>
+                    <h3 class="why-title">Real-Time and Continuous Monitoring</h3>
+                    <p class="why-description">Non-invasive assessment using near-infrared spectroscopy for immediate, ongoing clinical insights.</p>
                 </div>
                 <div class="why-card">
                     <div class="why-number">02</div>
-                    <h3 class="why-title">Real-Time Monitoring</h3>
-                    <p class="why-description">Continuous, non-invasive assessment using near-infrared spectroscopy for immediate clinical insights.</p>
-                </div>
-                <div class="why-card">
-                    <div class="why-number">03</div>
                     <h3 class="why-title">AI-Driven Accuracy</h3>
                     <p class="why-description">Proprietary algorithms translate cerebral oxygenation changes into personalized pain indices.</p>
                 </div>
                 <div class="why-card">
-                    <div class="why-number">04</div>
+                    <div class="why-number">03</div>
                     <h3 class="why-title">Clinically Validated</h3>
                     <p class="why-description">Over 400 patients across 5 published studies with >90% accuracy in pain assessment.</p>
                 </div>
@@ -321,7 +325,6 @@
                 <div class="footer-section">
                     <h4 class="footer-heading">Product</h4>
                     <ul class="footer-links">
-                        <li><a href="product.html">Product Overview</a></li>
                         <li><a href="clinical.html">Clinical Data</a></li>
                     </ul>
                 </div>
