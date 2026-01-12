@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CereVu - Objectively measuring pain in real-time with a wearable sensor. Algorithm-driven solution for continuous, real-time pain assessment.">
+    <meta name="description" content="CereVu - AI-driven wearable sensor for continuous monitoring of vital signs, body activity, coughing dynamics, and novel biomarkers for objective assessment of pain and dyspnea.">
     <meta name="keywords" content="CereVu, pain measurement, wearable sensor, medical device, pain assessment, healthcare">
     <meta name="author" content="CereVu Medical">
     
@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cerevu.com/">
     <meta property="og:title" content="CereVu - Objective Pain Measurement">
-    <meta property="og:description" content="Objectively measuring pain in real-time with a wearable sensor. Algorithm-driven solution for continuous, real-time pain assessment.">
+    <meta property="og:description" content="AI-driven wearable sensor for continuous monitoring of vital signs, body activity, coughing dynamics, and novel biomarkers for objective assessment of pain and dyspnea.">
     <meta property="og:image" content="https://cerevu.com/assets/og-image.png">
 
     <!-- Twitter -->
@@ -37,13 +37,13 @@
         <div class="container nav-container">
             <div class="logo">
                 <a href="index.html" style="display: flex; align-items: center; text-decoration: none; gap: 12px;">
-                    <img src="assets/header-logo.png" alt="CereVu Logo" class="logo-icon">
+                    <img src="assets/CereVu-Medical_H-logo_sm_CMYK.jpg" alt="CereVu Logo" class="logo-icon">
                     <span class="logo-text">CereVu</span>
                 </a>
             </div>
             <div class="nav-links">
                 <a href="index.html">Home</a>
-                <a href="clinical.html">Clinical Data</a>
+                <a href="clinical.html">Publications</a>
                 <a href="about.html">About</a>
                 <a href="privacy.html">Privacy</a>
             </div>
@@ -58,7 +58,7 @@
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobile-menu">
         <a href="index.html">Home</a>
-        <a href="clinical.html">Clinical Data</a>
+        <a href="clinical.html">Publications</a>
         <a href="about.html">About</a>
         <a href="privacy.html">Privacy</a>
     </div>
@@ -75,11 +75,10 @@
         <div class="container hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    Objective <span class="highlight">pain</span> management<br>in real-time
+                    Objective measurement of <span class="highlight">pain</span> and <span class="highlight">dyspnea</span>
                 </h1>
                 <p class="hero-subtitle">
-                    Algorithm-driven wearable sensor for continuous, real-time pain assessment. 
-                    Transform pain management with objective, data-driven insights.
+                    Powered by our novel AI-derived biomarkers from a wearable sensor array also capturing heart rate, respiratory rate, and SpO₂.
                 </p>
                 <div class="hero-stats">
                     <div class="stat">
@@ -106,24 +105,31 @@
                                 <img src="assets/CereVu-Medical_H-logo.png" alt="CereVu Medical" class="monitor-logo">
                             </div>
                             
-                            <!-- Waveform Display -->
-                            <div class="waveform-panel">
-                                <canvas id="signalCanvas" class="signal-canvas"></canvas>
-                            </div>
-                            
-                            <!-- Vital Signs Gauges Grid - 5 gauges -->
-                            <div class="vitals-grid-5">
-                                <!-- rSO₂ (Regional Cerebral Oxygen Saturation) -->
-                                <div class="vital-gauge-container">
-                                    <canvas id="rso2GaugeCanvas" class="vital-gauge-canvas"></canvas>
+                            <!-- Primary Gauges - Pain & Dyspnea (Large) -->
+                            <div class="vitals-grid-primary">
+                                <!-- Pain -->
+                                <div class="vital-gauge-container vital-gauge-large">
+                                    <canvas id="painGaugeCanvas" class="vital-gauge-canvas"></canvas>
                                     <div class="vital-value-display">
-                                        <div class="vital-value rso2-value" id="rso2Value">68</div>
-                                        <div class="vital-label">rSO<sub>2</sub></div>
+                                        <div class="vital-value pain-value" id="painValue">5</div>
+                                        <div class="vital-label">Pain</div>
                                     </div>
                                 </div>
                                 
+                                <!-- Dyspnea -->
+                                <div class="vital-gauge-container vital-gauge-large">
+                                    <canvas id="dyspneaGaugeCanvas" class="vital-gauge-canvas"></canvas>
+                                    <div class="vital-value-display">
+                                        <div class="vital-value dyspnea-value" id="dyspneaValue">3</div>
+                                        <div class="vital-label">Dyspnea</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Secondary Gauges - Vital Signs (Small) -->
+                            <div class="vitals-grid-secondary vitals-grid-3">
                                 <!-- SpO₂ -->
-                                <div class="vital-gauge-container">
+                                <div class="vital-gauge-container vital-gauge-small">
                                     <canvas id="spo2GaugeCanvas" class="vital-gauge-canvas"></canvas>
                                     <div class="vital-value-display">
                                         <div class="vital-value spo2-value" id="spo2Value">97</div>
@@ -132,31 +138,28 @@
                                 </div>
                                 
                                 <!-- Heart Rate -->
-                                <div class="vital-gauge-container">
+                                <div class="vital-gauge-container vital-gauge-small">
                                     <canvas id="hrGaugeCanvas" class="vital-gauge-canvas"></canvas>
                                     <div class="vital-value-display">
-                                        <div class="vital-value hr-value" id="hrValue">74</div>
+                                        <div class="vital-value hr-value" id="hrValue">72</div>
                                         <div class="vital-label">HR</div>
                                     </div>
                                 </div>
                                 
                                 <!-- Respiratory Rate -->
-                                <div class="vital-gauge-container">
+                                <div class="vital-gauge-container vital-gauge-small">
                                     <canvas id="rrGaugeCanvas" class="vital-gauge-canvas"></canvas>
                                     <div class="vital-value-display">
                                         <div class="vital-value rr-value" id="rrValue">15</div>
                                         <div class="vital-label">RR</div>
                                     </div>
                                 </div>
-                                
-                                <!-- Body Temperature -->
-                                <div class="vital-gauge-container temp-gauge-container">
-                                    <canvas id="tempGaugeCanvas" class="vital-gauge-canvas"></canvas>
-                                    <div class="vital-value-display">
-                                        <div class="vital-value temp-value" id="tempValue">36.7</div>
-                                        <div class="vital-label">Temp °C</div>
-                                    </div>
-                                </div>
+                            </div>
+
+                            <!-- Monitor Actions (Inactive) -->
+                            <div class="monitor-actions">
+                                <div class="monitor-action-btn">Message Clinic</div>
+                                <div class="monitor-action-btn">Daily Health Screening</div>
                             </div>
                         </div>
                     </div>
@@ -207,12 +210,11 @@
                 <div class="excellence-card">
                     <div class="excellence-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                         </svg>
                     </div>
-                    <div class="excellence-stat">5</div>
-                    <h3 class="excellence-title">Clinical Studies</h3>
-                    <p class="excellence-description">Rigorous clinical validation across multiple studies</p>
+                    <h3 class="excellence-title">Published Research</h3>
+                    <p class="excellence-description">Multiple published studies with leading research institutes including Stanford University</p>
                 </div>
                 <div class="excellence-card">
                     <div class="excellence-icon">
@@ -227,16 +229,64 @@
                 <div class="excellence-card">
                     <div class="excellence-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                         </svg>
                     </div>
-                    <div class="excellence-stat">2</div>
-                    <h3 class="excellence-title">Publications</h3>
-                    <p class="excellence-description">Published peer-reviewed research validating our technology</p>
+                    <div class="excellence-stat">5</div>
+                    <h3 class="excellence-title">Clinical Studies</h3>
+                    <p class="excellence-description">Rigorous clinical validation across five comprehensive studies</p>
                 </div>
             </div>
-            <div class="cta-section">
-                <a href="clinical.html" class="btn btn-primary">View Clinical Evidence</a>
+            <div class="publications-section">
+                <h4 class="publications-heading">Our Publications</h4>
+                <div class="publications-grid">
+                    <!-- Journal of Pain Research -->
+                    <a href="https://www.dovepress.com/correlation-of-changes-in-hemodynamic-response-as-measured-by-cerebral-peer-reviewed-fulltext-article-JPR" target="_blank" rel="noopener noreferrer" class="publication-card">
+                        <div class="publication-image">
+                            <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&h=400&fit=crop&crop=center" alt="Brain activity monitoring and cerebral hemodynamic research" loading="lazy">
+                            <div class="pub-image-overlay"></div>
+                            <span class="pub-year">2018</span>
+                        </div>
+                        <div class="publication-content">
+                            <div class="publication-meta">
+                                <span class="publication-journal">Journal of Pain Research</span>
+                                <span class="publication-type">Peer-Reviewed</span>
+                            </div>
+                            <h5 class="publication-title">Correlation of Changes in Hemodynamic Response as Measured by Cerebral Optical Spectrometry with Subjective Pain Ratings</h5>
+                            <p class="publication-excerpt">A prospective cohort study evaluating cerebral optical spectrometry in volunteers and laboring women, demonstrating significant correlation with subjective pain ratings.</p>
+                            <div class="publication-footer">
+                                <span class="read-article">Read Article</span>
+                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- MDPI Journal -->
+                    <a href="https://www.mdpi.com/1660-4601/19/24/17041" target="_blank" rel="noopener noreferrer" class="publication-card">
+                        <div class="publication-image">
+                            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop&crop=center" alt="Medical monitoring technology and infrared spectroscopy" loading="lazy">
+                            <div class="pub-image-overlay"></div>
+                            <span class="pub-year">2022</span>
+                        </div>
+                        <div class="publication-content">
+                            <div class="publication-meta">
+                                <span class="publication-journal">MDPI IJERPH</span>
+                                <span class="publication-type">Open Access</span>
+                            </div>
+                            <h5 class="publication-title">Pain Assessment Using Near-Infrared Spectroscopy</h5>
+                            <p class="publication-excerpt">Comprehensive research on utilizing near-infrared spectroscopy technology for objective pain assessment in clinical and research settings.</p>
+                            <div class="publication-footer">
+                                <span class="read-article">Read Article</span>
+                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
             </div>
         </div>
     </section>
@@ -249,7 +299,7 @@
                 <p class="section-subtitle">Recent achievements and milestones</p>
             </div>
             <div class="news-grid">
-                <div class="news-card">
+                <a href="https://www.nature.com/articles/d41586-024-03003-2" target="_blank" rel="noopener noreferrer" class="news-card" style="text-decoration: none; color: inherit;">
                     <div class="news-badge">Featured</div>
                     <div class="news-icon">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -259,7 +309,7 @@
                     <h3 class="news-title">Featured in Nature Magazine</h3>
                     <p class="news-description">"How a 'pain-o-meter' could improve treatments" — Nature, September 2024</p>
                     <p class="news-date">September 2024</p>
-                </div>
+                </a>
                 <div class="news-card">
                     <div class="news-badge">Funding</div>
                     <div class="news-icon">
@@ -267,19 +317,8 @@
                             <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="news-title">$2M in NSF & FDA Grants</h3>
-                    <p class="news-description">Secured major funding from National Science Foundation and FDA to advance objective pain measurement technology</p>
-                    <p class="news-date">2024</p>
-                </div>
-                <div class="news-card">
-                    <div class="news-badge">Regulatory</div>
-                    <div class="news-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 00-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <h3 class="news-title">FDA Pre-Submission Completed</h3>
-                    <p class="news-description">Successfully completed FDA Pre-submission meeting with Anesthesia/Respiratory Branch. De novo 510(k) pathway established</p>
+                    <h3 class="news-title">>$2M Grant Funding</h3>
+                    <p class="news-description">Secured major funding from federal agencies including NSF and FDA to advance objective pain measurement technology</p>
                     <p class="news-date">2024</p>
                 </div>
             </div>
@@ -317,30 +356,22 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">CereVu</h3>
-                    <p class="footer-description">Objectively measuring pain in real-time with wearable sensor technology.</p>
-                    <p class="footer-description">© 2025 CereVu Medical. All rights reserved.</p>
-                </div>
-                <div class="footer-section">
-                    <h4 class="footer-heading">Product</h4>
-                    <ul class="footer-links">
-                        <li><a href="clinical.html">Clinical Data</a></li>
-                    </ul>
+                <div class="footer-section footer-disclaimer">
+                    <h4 class="footer-heading">Investigational Use Only</h4>
+                    <p class="footer-description disclaimer-text">CereVu's technology is investigational and has not been cleared or approved by the U.S. Food and Drug Administration (FDA). The technology is intended for research and evaluation purposes only and is not currently intended for clinical diagnosis, treatment, or medical decision-making.</p>
+                    <p class="footer-description">© <span id="current-year"></span> CereVu Medical. All rights reserved.</p>
                 </div>
                 <div class="footer-section">
                     <h4 class="footer-heading">Company</h4>
                     <ul class="footer-links">
                         <li><a href="about.html">About</a></li>
+                        <li><a href="clinical.html">Clinical Studies</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4 class="footer-heading">Legal</h4>
                     <ul class="footer-links">
                         <li><a href="privacy.html">Privacy Policy</a></li>
-                        <li><a href="clinical.html">Clinical Studies</a></li>
-                        <li><a href="mailto:info@cerevu.com?subject=Press Inquiry">Press Inquiries</a></li>
-                        <li><a href="mailto:info@cerevu.com?subject=Careers">Careers</a></li>
                     </ul>
                 </div>
             </div>
